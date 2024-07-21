@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 // Enable CORS for all routes
 app.use(cors(
   {
-    origin: ["https://deploy-mern-lwhq.vercel.app"],
+    origin: [""],
     methods: ["POST","GET"],
     credentials: true
   }

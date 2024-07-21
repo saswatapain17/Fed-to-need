@@ -31,7 +31,7 @@ const Waste = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:5000/waste",
+        "https://fed-to-need-server.vercel.app/waste",
         FoodWasteData,
         {
           headers: {

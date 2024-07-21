@@ -25,7 +25,7 @@ const Inventory = () => {
         throw new Error("No token found");
       }
 
-      const response = await axios.get("http://localhost:5000/inventory", {
+      const response = await axios.get("https://fed-to-need-server.vercel.app/inventory", {
         headers: {
           Authorization: token,
         },

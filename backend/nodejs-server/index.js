@@ -16,7 +16,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Enable CORS for all routes
-app.use(cors());
+app.use(cors(
+  {
+    origin: ["https://deploy-mern-lwhq.vercel.app"],
+    methods: ["POST","GET"],
+    credentials: true
+  }
+));
 
 // MongoDB configuration
 const mongoURI = "mongodb://127.0.0.1:27017/feedforward";

@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 // Enable CORS for all routes
 app.use(cors(
   {
-    origin: [""],
+    origin: ["https://fed-to-need-frontend.vercel.app/"],
     methods: ["POST","GET"],
     credentials: true
   }

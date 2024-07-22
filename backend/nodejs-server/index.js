@@ -7,25 +7,19 @@ const jwt = require("jsonwebtoken");
 
 const app = express();
 
-// Start the server
-const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
-
 // Body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Enable CORS for all routes
-app.use(cors(
-  {
-    origin: ["https://fed-to-need-frontend.vercel.app"],
-    methods: ["POST","GET"],
-    credentials: true
-  }
-));
+app.use(cors({
+  origin: ["https://fed-to-need-frontend.vercel.app"],
+  methods: ["POST","GET"],
+  credentials: true
+}));
 
-// MongoDB configuration
-const mongoURI = "mongodb://127.0.0.1:27017/feedforward";
+// MongoDB configuration (use your MongoDB Atlas URI here)
+const mongoURI = process.env.MONGO_URI || "your_mongodb_atlas_uri";
 mongoose
   .connect(mongoURI, {
     useNewUrlParser: true,
@@ -47,7 +41,7 @@ const verifyToken = (req, res, next) => {
 
   jwt.verify(
     token,
-    "78f15b5705f3cd8d8c39ec495b9ac2f6637bf215eaf3dbf02e9f7549320a483b",
+    process.env.JWT_SECRET || "78f15b5705f3cd8d8c39ec495b9ac2f6637bf215eaf3dbf02e9f7549320a483b",
     (err, decodedToken) => {
       if (err) {
         return res.status(401).json({ error: "Invalid token" });
@@ -58,8 +52,6 @@ const verifyToken = (req, res, next) => {
     }
   );
 };
-
-
 
 // Create a schema and model for the user
 const userSchema = new mongoose.Schema({
@@ -73,7 +65,7 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model("User", userSchema);
 
 // Define a route to handle form submissions for signup
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
   console.log("Hello");
 });
 app.post("/signup", (req, res) => {
@@ -140,7 +132,7 @@ app.post("/login", (req, res) => {
         // Create and sign a JWT token
         const token = jwt.sign(
           { userId: user._id },
-          "78f15b5705f3cd8d8c39ec495b9ac2f6637bf215eaf3dbf02e9f7549320a483b"
+          process.env.JWT_SECRET || "78f15b5705f3cd8d8c39ec495b9ac2f6637bf215eaf3dbf02e9f7549320a483b"
         );
 
         // Return the token in the response
@@ -152,8 +144,6 @@ app.post("/login", (req, res) => {
       res.status(500).json({ error: err.message });
     });
 });
-
-/*Donation Server*/
 
 // Create a schema and model for the donation in the donation database
 const donationSchema = new mongoose.Schema({
@@ -191,7 +181,7 @@ app.post("/donate", verifyToken, (req, res) => {
 
   // Save the donation to the donation database
   newDonation
-    .save() 
+    .save()
     .then((donation) => {
       res.json(donation);
     })
@@ -213,8 +203,6 @@ app.get("/donation", verifyToken, (req, res) => {
       res.status(500).json({ error: "Failed to fetch donation datas" });
     });
 });
-
-/*Inventory Page */
 
 // Create a schema and model for the inventory item
 const inventorySchema = new mongoose.Schema({
@@ -309,8 +297,6 @@ app.put("/inventory/:id", verifyToken, (req, res) => {
     });
 });
 
-/*Food Waste Data DB*/
-
 //Creating Schema for Waste Data
 const wasteSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
@@ -327,7 +313,7 @@ const WasteData = mongoose.model("WasteData", wasteSchema);
 app.post("/waste", verifyToken, (req, res) => {
   const { foodItem, foodQuantity, foodReason, foodWasteDate, foodAddTxt } =
     req.body;
-    const userId = req.userId;
+  const userId = req.userId;
   if (
     !foodItem ||
     !foodQuantity ||
@@ -370,3 +356,7 @@ app.get("/waste", verifyToken, (req, res) => {
       res.status(500).json({ error: "Failed to fetch inventory items" });
     });
 });
+
+// Start the server
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`Server running on port ${port}`));

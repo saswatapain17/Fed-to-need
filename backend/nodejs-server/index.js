@@ -73,6 +73,9 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model("User", userSchema);
 
 // Define a route to handle form submissions for signup
+app.post("/",(req,res)=>{
+  console.log("Hello");
+});
 app.post("/signup", (req, res) => {
   const { name, email, password, phone, userType } = req.body;
 
